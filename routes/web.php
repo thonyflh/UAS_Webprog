@@ -28,26 +28,25 @@ Route::get('/login', [LoginController::class, 'index'])->middleware('guest')->na
 Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth');
 
-Route::get('/register', [RegisterController::class, 'index'])->middleware('guest');
+Route::get('/register', [RegisterController::class, 'index'])->middleware('guest')->name('login');
 Route::post('/register', [RegisterController::class, 'store']);
 
-Route::get('/home',[ItemController::class,'idx']);
-Route::get('/detail/{id}',[ItemController::class,'detail']);
-
-Route::get('/order/{id}',[OrderController::class, 'idx'])->name('order_get');
-Route::POST('/order/{user_id}/{item_id}',[OrderController::class, 'store']);
-Route::delete('/order/delete/{user_id}/{item_id}',[OrderController::class, 'deleteLogic']);
-
-Route::get('/purchase/{user_id}',[PurchaseController::class]);
-Route::POST('/purchase/{user_id}',[PurchaseController::class, 'store']);
-Route::get('/success', function () {
-    return view('success');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/home',[ItemController::class,'idx']);
+    Route::get('/detail/{id}',[ItemController::class,'detail']);
+    Route::get('/order/{id}',[OrderController::class, 'idx'])->name('order_get');
+    Route::POST('/order/{user_id}/{item_id}',[OrderController::class, 'store']);
+    Route::delete('/order/delete/{user_id}/{item_id}',[OrderController::class, 'deleteLogic']);
+    Route::get('/purchase/{user_id}',[PurchaseController::class]);
+    Route::POST('/purchase/{user_id}',[PurchaseController::class, 'store']);
+    Route::get('/success', function () {
+        return view('success');
+    });
+    Route::get('/profile',[ProfileController::class, 'idx']);
+    Route::POST('/profile',[ProfileController::class, 'update']);
 });
 
-Route::get('/profile',[ProfileController::class, 'idx']);
-Route::POST('/profile',[ProfileController::class, 'update']);
-
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['admin'])->group(function () {
     Route::get('/manage',[UserController::class,'idx']);
     Route::get('/update/{id}',[UserController::class,'update']);
     Route::post('/updateuser/{id}',[UserController::class,'updateLogic']);

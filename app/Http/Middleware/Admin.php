@@ -17,7 +17,7 @@ class Admin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::guest() || Auth::user()->admin == false) {
+        if (Auth::guest() || Auth::user()->role_id == 1) {
             abort(403);
         }
         return $next($request);
